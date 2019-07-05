@@ -1,0 +1,72 @@
+#addAction {
+    display: grid;
+    position: fixed;
+    right: 1em;
+    bottom: 1em;
+    width: 3em;
+    height: 3em;
+    background: white;
+    border-radius: 50%;
+    border: 1px solid grey;
+}
+
+#addAction div {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#addAction:hover {
+    background: lightgrey;
+    cursor: pointer;
+}
+
+
+
+/* ---------------------------------------- */
+
+#actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+#actions-head {
+    display: grid;
+    grid-template-columns: 2fr 5fr 1fr;
+    grid-template-rows: 1.5em;
+    border-bottom: 2px solid lightgrey;
+    align-items: center;
+}
+
+#actions-head div {
+    padding: 0 1em;
+}
+
+.action {
+    display: grid;
+    grid-template-columns: 2fr 5fr 1fr;
+    grid-template-rows: 2em;
+    border-bottom: 1px solid lightgrey;
+    align-items: center;
+}
+
+.action div {
+    padding: 0 1em;
+}
+
+.action:hover {
+    cursor: pointer;
+    background: lightgrey;
+}
+
+.action-delete {
+    background: lightcoral !important;
+}
+
+.action-delete:hover {
+    cursor: pointer;
+    background: red !important;
+}

@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            body {
+                text-align: center;
+            }
+
+            table {
+                width: 50%;
+                margin: 0 25%;
+                border: 1px solid black;
+            }
+
+            .thead {
+                text-align: center;
+            }
+
+            .tsummary {
+                background: yellow;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .tsummaryi {
+                display: flex;
+                align-items: center;
+            }
+
+            .tcontent {
+                background: red;
+                display: grid;
+                grid-template-columns: 2fr 4fr 1fr;
+                grid-template-rows: 2em;
+                height: 2em;
+            }
+
+            .tcontentcat {
+                display: flex;
+                align-items: center;
+            }
+
+
+        </style>
+    </head>
+
+    <body>
+        <table>
+            <tbody>
+                <td>
+                    <tr>
+                        <td class="thead">
+                            Juni 2019
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tsummary">
+                            <span class="tsummaryi">Test</span>
+                            <span class="tsummaryi">Test</span>
+                            <span class="tsummaryi">Test</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tcontent">
+                            <span class="tcontentcat">Category</span>
+                            <span class="tcontentbeschr">Beschreibung</span>
+                            <span class="tcontentprice">555€</span>
+                        </td>
+                    </tr>
+                </td>
+            </tbody>
+        </table>
+    </body>
+</html>

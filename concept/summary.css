@@ -1,0 +1,25 @@
+#summary {
+    width: 100%;
+    height: 3em;
+    background: white;
+    border-bottom: 2px solid lightgrey;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#income, #outgoing, #sum {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#income > div, #outgoing > div, #sum > div {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+}
+
+#income > div > div, #outgoing > div > div, #sum > div > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

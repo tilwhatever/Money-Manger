@@ -1,0 +1,16 @@
+#add {
+    margin-top: 0.3em;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    row-gap: 0.3em;
+}
+
+#add > div {
+    padding: 0 1em;
+}
+
+#actionField {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
