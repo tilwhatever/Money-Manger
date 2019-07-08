@@ -81,7 +81,8 @@ httpError model error =
 
         log : String -> Model -> Model
         log string vmodel =
-            Debug.log string vmodel
+            vmodel
+            --Debug.log string vmodel
     in
     case error of
         Http.BadUrl string ->
@@ -182,6 +183,7 @@ getActionsInMonth args =
                 |> required "id" int
                 |> required "description" string
                 |> required "amount" int
+                |> required "amountCent" int
                 |> required "category" string
                 |> required "actionType" decodeActionType
                 |> required "date" decodeDate
@@ -243,11 +245,12 @@ addAction args =
             Encoder.object
                 [ ( "description", Encoder.string <| getArg args 0 )
                 , ( "amount", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 1 )
-                , ( "day", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 2 )
-                , ( "month", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 3 )
-                , ( "year", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 4 )
-                , ( "action", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 5 )
-                , ( "category", Encoder.string <| getArg args 6 )
+                , ( "amountCent", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 2 )
+                , ( "day", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 3 )
+                , ( "month", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 4 )
+                , ( "year", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 5 )
+                , ( "action", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 6 )
+                , ( "category", Encoder.string <| getArg args 7 )
                 ]
                 |> httpEncoder "addAction"
 
@@ -409,6 +412,7 @@ getAction args =
                 |> required "id" int
                 |> required "description" string
                 |> required "amount" int
+                |> required "amountCent" int
                 |> required "category" string
                 |> required "actionType" decodeActionType
                 |> required "date" decodeDate
@@ -431,6 +435,7 @@ getActionRes action model =
             { oldInputs
                 | addActionDescription = action.description
                 , addActionAmount = String.fromInt action.amount
+                , addActionAmountCent = String.fromInt action.amountCent
                 , addActionCategory = action.category
                 , addActionDay = String.fromInt action.date.day
                 , addActionMonth = String.fromInt action.date.month
@@ -462,11 +467,12 @@ editAction args =
                 [ ( "id", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 0)
                 , ( "description", Encoder.string <| getArg args 1 )
                 , ( "amount", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 2 )
-                , ( "day", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 3 )
-                , ( "month", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 4 )
-                , ( "year", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 5 )
-                , ( "action", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 6 )
-                , ( "category", Encoder.string <| getArg args 7 )
+                , ( "amountCent", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 3 )
+                , ( "day", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 4 )
+                , ( "month", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 5 )
+                , ( "year", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 6 )
+                , ( "action", Encoder.int <| Helpers.stringToIntWithDefaultZero <| getArg args 7 )
+                , ( "category", Encoder.string <| getArg args 8 )
                 ]
                 |> httpEncoder "editAction"
 

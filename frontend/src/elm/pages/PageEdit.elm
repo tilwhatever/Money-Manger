@@ -2,7 +2,7 @@ module PageEdit exposing (view)
 
 import Browser exposing (Document)
 import Html exposing (Html, button, div, i, input, nav, text, fieldset)
-import Html.Attributes exposing (class, id, min, max, value, type_, checked)
+import Html.Attributes exposing (class, id, min, max, value, type_, checked, maxlength)
 import Html.Events exposing (onClick, onInput)
 import HttpMod
 import Input
@@ -84,7 +84,12 @@ view model =
                     (String.toInt model.inputs.addActionYear)
                 ]
             , div [] [ text "Betrag" ]
-            , div [] [ input [ onInput <| ChangeInput Input.AddActionAmount, value model.inputs.addActionAmount ] [] ]
+            , div []
+                [ input [ onInput <| ChangeInput Input.AddActionAmount, value model.inputs.addActionAmount, id "amount", maxlength 7 ] [] 
+                , text " ,  "
+                , input [ onInput <| ChangeInput Input.AddActionAmountCent, value model.inputs.addActionAmountCent, id "amountCent", maxlength 2 ] []
+                , text "€"
+                ]
             , div [] [ text "Beschreibung" ]
             , div [] [ input [ onInput <| ChangeInput Input.AddActionDescription, value model.inputs.addActionDescription ] [] ]
             , div [] [ text "Kategorie" ]
@@ -115,9 +120,11 @@ view model =
             , div []
                 [ button
                     [ onClick
-                        (HttpRequest HttpMod.AddAction
-                            [ model.inputs.addActionDescription
+                        (HttpRequest HttpMod.EditAction
+                            [ getIdFromUrl model
+                            , model.inputs.addActionDescription
                             , model.inputs.addActionAmount
+                            , getCents model.inputs.addActionAmountCent
                             , model.inputs.addActionDay
                             , model.inputs.addActionMonth
                             , model.inputs.addActionYear
@@ -131,6 +138,10 @@ view model =
         ]
     }
 
+getCents : String -> String
+getCents cents =
+    if (Maybe.withDefault 0 <| String.toInt cents) < 10 then cents ++ "0"
+        else cents
 
 chooseAction : Model -> String
 chooseAction model =

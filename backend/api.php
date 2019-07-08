@@ -6,7 +6,7 @@
 
     /* ----- connect to database ----- */
     //$pdo = new PDO("mysql:host=localhost;dbname=money-manager", "root", "");
-    $con = new mysqli("localhost", "tilpo", "!Stoe-poeh11-febas", "money-manager");
+    $con = new mysqli("localhost", "tilpo", "..", "money-manager");
     if ($con->connect_errno) {
         $result = (object)array();
         $result->data = "err";
@@ -28,6 +28,7 @@
             echo addAction($con, 
                 $query["request"]["data"]["description"],
                 $query["request"]["data"]["amount"],
+                $query["request"]["data"]["amountCent"],
                 $query["request"]["data"]["day"],
                 $query["request"]["data"]["month"],
                 $query["request"]["data"]["year"],
@@ -40,6 +41,7 @@
                 $query["request"]["data"]["id"],
                 $query["request"]["data"]["description"],
                 $query["request"]["data"]["amount"],
+                $query["request"]["data"]["amountCent"],
                 $query["request"]["data"]["day"],
                 $query["request"]["data"]["month"],
                 $query["request"]["data"]["year"],
@@ -78,7 +80,7 @@
         $result->data = (object)array();
 
         $sql = "
-            SELECT actions.id, description, amount, day, month, year, action, categories.category FROM actions LEFT JOIN categories ON actions.category = categories.id 
+            SELECT actions.id, description, amount, amountCent, day, month, year, action, categories.category FROM actions LEFT JOIN categories ON actions.category = categories.id 
             WHERE actions.id = ?
         ";
 
@@ -91,6 +93,7 @@
             $result->data->id = $row["id"];
             $result->data->description = $row["description"];
             $result->data->amount = $row["amount"];
+            $result->data->amountCent = $row["amountCent"];
             $result->data->category = $row["category"];
             $result->data->actionType = $row["action"];
             $result->data->date = (object)array();
@@ -118,7 +121,7 @@
         $result->data->currentDate->year = intval($year);
 
         $sql = "
-            SELECT actions.id, description, amount, day, month, year, action, categories.category FROM actions LEFT JOIN categories ON actions.category = categories.id 
+            SELECT actions.id, description, amount, amountCent, day, month, year, action, categories.category FROM actions LEFT JOIN categories ON actions.category = categories.id 
             WHERE year = ? and month = ? ORDER BY year, month, day ASC
         ";
         
@@ -132,6 +135,7 @@
             $entry->id = $row["id"];
             $entry->description = $row["description"];
             $entry->amount = $row["amount"];
+            $entry->amountCent = $row["amountCent"];
             $entry->category = $row["category"];
             $entry->actionType = $row["action"];
             $entry->date = (object)array();
@@ -145,7 +149,7 @@
         return json_encode($result);
     }
 
-    function addAction($con, $description, $amount, $day, $month, $year, $action, $category) {
+    function addAction($con, $description, $amount, $amountCent, $day, $month, $year, $action, $category) {
         $result = (object)array();
         $result->data = (object)array();
         
@@ -161,11 +165,11 @@
         $row = (array)$row;
 
         $sql = "
-            INSERT INTO actions (description, amount, day, month, year, action, category)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO actions (description, amount, amountCent, day, month, year, action, category)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ";
         $sql = $con->prepare($sql);
-        $sql->bind_param("siiiiis", $description, $amount, $day, $month, $year, $action, $row["id"]);
+        $sql->bind_param("siiiiiii", $description, $amount, $amountCent, $day, $month, $year, $action, $row["id"]);
 
         if ($sql->execute() === TRUE) {
             $result->data->result = TRUE;
@@ -179,7 +183,7 @@
         return json_encode($result);
     }
 
-    function editAction($con, $id, $description, $amount, $day, $month, $year, $action, $category) {
+    function editAction($con, $id, $description, $amount, $amountCent, $day, $month, $year, $action, $category) {
         $result = (object)array();
         $result->data = (object)array();
         
@@ -195,12 +199,12 @@
         $row = (array)$row;
 
         $sql = "
-            UPDATE actions SET description = ?, amount = ?, day = ?, month = ?, year = ?, action = ?, category = ?
+            UPDATE actions SET description = ?, amount = ?, amountCent = ?, day = ?, month = ?, year = ?, action = ?, category = ?
             WHERE id = ?
         ";
 
         $sql = $con->prepare($sql);
-        $sql->bind_param("siiiiiii", $description, $amount, $day, $month, $year, $action, $row["id"], $id);
+        $sql->bind_param("siiiiiiii", $description, $amount, $amountCent, $day, $month, $year, $action, $row["id"], $id);
 
         if ($sql->execute() === TRUE) {
             $result->data->result = TRUE;

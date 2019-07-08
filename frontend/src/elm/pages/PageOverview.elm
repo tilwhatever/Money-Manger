@@ -37,17 +37,32 @@ view model =
 
         inOut : Action.ActionType -> List Action.Action -> String
         inOut actionType actions =
+            String.fromFloat ((euro actionType actions) / 100)
+
+        euro : Action.ActionType -> List Action.Action -> Float
+        euro vactionType vactions = 
             map (\i ->
-                if i.actionType == actionType then i.amount 
+                if i.actionType == vactionType then (i.amount * 100) + i.amountCent
                     else 0
-            ) actions
+                    ) vactions
             |> foldl (+) 0
-            |> String.fromInt
+            |> toFloat
+
+        cents : Action.ActionType -> List Action.Action -> Int
+        cents vactionType vactions = 
+            map (\i ->
+                if i.actionType == vactionType then i.amountCent
+                    else 0
+                    ) vactions
+            |> foldl (+) 0
+
+        inOutFloat : Action.ActionType -> List Action.Action -> String
+        inOutFloat actionType actions =
+            String.fromFloat ((euro actionType actions) / 10)
 
         sum : List Action.Action -> String
         sum actions =
-            String.fromInt <| (Maybe.withDefault 0 (String.toInt (inOut Action.In actions))) - (Maybe.withDefault 0 (String.toInt (inOut Action.Out actions))) 
-
+            String.fromFloat <| ((euro Action.In actions) - (euro Action.Out actions)) / 100
     in
     { title = "Übersicht"
     , body =
@@ -60,7 +75,7 @@ view model =
             , div [ id "nav-right" ]
                 [ div [] [ div [ class "buttonLong", onClick <| ChangeRoute Route.Categories ] [ text "Kategorien" ] ]
                 , div [] [ div [ class "button", onClick DeleteAction ] [ i [ class deleteButtonClass ] [] ] ]
-                , div [] [ div [ class "button" ] [ i [ class "fas fa-chart-bar" ] [] ] ]
+               --, div [] [ div [ class "button" ] [ i [ class "fas fa-chart-bar" ] [] ] ]
                 ]
             ]
         , div [ id "summary" ]
@@ -82,6 +97,7 @@ view model =
                     , div [] [ text <| (sum model.actions) ++ " €" ]
                     ]
                 ]
+            , div [ id "smiley" ] (getSmiley (Maybe.withDefault 0.0 (String.toFloat (sum model.actions))))
             ]
         , div [ id "actions" ]
             ([ div [ id "actions-head" ]
@@ -95,16 +111,34 @@ view model =
         , div [ id "addAction", onClick <| ChangeRoute Route.Add ]
             [ div [] [ i [ class "fas fa-plus" ] [] ]
             ]
-        {- , Svg.svg [ SvgA.width "400", SvgA.height "400" ] 
-            [ Svg.rect 
-                [ SvgA.width "200"
-                , SvgA.height "200"
-                , SvgA.fill "#2A7BB4"
-                ] []
-            ] -}
+        
         ]
     }
 
+getSmiley : Float -> List (Html Msg)
+getSmiley sum =
+    if sum >= 0.0 then 
+        [ Svg.svg [ SvgA.viewBox "0 0 200 200", SvgA.width "100%", SvgA.height "100%" ]
+                        [ Svg.circle [ SvgA.cx "100", SvgA.cy "100", SvgA.r "100", SvgA.fill "green" ] []
+                        , Svg.circle [ SvgA.cx "65", SvgA.cy "65", SvgA.r "10", SvgA.fill "white" ] []
+                        , Svg.circle [ SvgA.cx "135", SvgA.cy "65", SvgA.r "10", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "95", SvgA.y "100", SvgA.width "10", SvgA.height "25", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "50", SvgA.y "150", SvgA.width "100", SvgA.height "10", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "50", SvgA.y "130", SvgA.width "10", SvgA.height "25", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "140", SvgA.y "130", SvgA.width "10", SvgA.height "25", SvgA.fill "white" ] []
+                        ]
+                ]
+    else
+        [ Svg.svg [ SvgA.viewBox "0 0 200 200", SvgA.width "100%", SvgA.height "100%" ]
+                        [ Svg.circle [ SvgA.cx "100", SvgA.cy "100", SvgA.r "100", SvgA.fill "red" ] []
+                        , Svg.circle [ SvgA.cx "65", SvgA.cy "65", SvgA.r "10", SvgA.fill "white" ] []
+                        , Svg.circle [ SvgA.cx "135", SvgA.cy "65", SvgA.r "10", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "95", SvgA.y "100", SvgA.width "10", SvgA.height "25", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "50", SvgA.y "150", SvgA.width "100", SvgA.height "10", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "50", SvgA.y "150", SvgA.width "10", SvgA.height "25", SvgA.fill "white" ] []
+                        , Svg.rect [ SvgA.x "140", SvgA.y "150", SvgA.width "10", SvgA.height "25", SvgA.fill "white" ] []
+                        ]
+                ]
 
 getActions : List Action.Action -> Bool -> List (Html Msg)
 getActions actions deleteState =
@@ -120,13 +154,18 @@ getActions actions deleteState =
         amountColor : Action.ActionType -> String
         amountColor actionType =
             if actionType == Action.In then "colGreen" else "colRed"
+
+        getCents : Int -> String
+        getCents cents =
+            if cents == 0 then "00"
+                else String.fromInt cents
     in
     map
         (\i ->
             div [ class deleteClass, onClick <| ActionClick i.id i.date.day i.date.month i.date.year ]
                 [ div [] [ text i.category ]
                 , div [] [ text i.description ]
-                , div [ class "amount", class <| amountColor i.actionType ] [ text <| "€ " ++ String.fromInt i.amount ]
+                , div [ class "amount", class <| amountColor i.actionType ] [ text <| "€ " ++ String.fromInt i.amount ++ "," ++ getCents i.amountCent ]
                 ]
         )
         actions

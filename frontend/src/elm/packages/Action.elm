@@ -6,6 +6,7 @@ type alias Action =
     { id : Int
     , description : String
     , amount : Int
+    , amountCent : Int
     , category : String
     , actionType : ActionType
     , date : Date.Date

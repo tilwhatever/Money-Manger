@@ -2,7 +2,7 @@ module PageAdd exposing (view)
 
 import Browser exposing (Document)
 import Html exposing (Html, button, div, i, input, nav, text, fieldset)
-import Html.Attributes exposing (class, id, min, max, value, checked, type_)
+import Html.Attributes exposing (class, id, min, max, value, checked, type_, maxlength)
 import Html.Events exposing (onClick, onInput, onClick)
 import HttpMod
 import Input
@@ -73,7 +73,12 @@ view model =
                     (String.toInt model.inputs.addActionYear)
                 ]
             , div [] [ text "Betrag" ]
-            , div [] [ input [ onInput <| ChangeInput Input.AddActionAmount, value model.inputs.addActionAmount ] [] ]
+            , div [] 
+                [ input [ onInput <| ChangeInput Input.AddActionAmount, value model.inputs.addActionAmount, id "amount", maxlength 7 ] [] 
+                , text " ,  "
+                , input [ onInput <| ChangeInput Input.AddActionAmountCent, value model.inputs.addActionAmountCent, id "amountCent", maxlength 2 ] []
+                , text "€"
+                ]
             , div [] [ text "Beschreibung" ]
             , div [] [ input [ onInput <| ChangeInput Input.AddActionDescription, value model.inputs.addActionDescription ] [] ]
             , div [] [ text "Kategorie" ]
@@ -107,6 +112,7 @@ view model =
                         (HttpRequest HttpMod.AddAction
                             [ model.inputs.addActionDescription
                             , model.inputs.addActionAmount
+                            , getCents model.inputs.addActionAmountCent
                             , model.inputs.addActionDay
                             , model.inputs.addActionMonth
                             , model.inputs.addActionYear
@@ -114,11 +120,16 @@ view model =
                             , model.inputs.addActionCategory
                             ]
                         )
-                    ] [ text "Save" ]
+                    ] [ text "Hinzufügen" ]
                 ] 
             ]
         ]
     }
+
+getCents : String -> String
+getCents cents =
+    if (Maybe.withDefault 0 <| String.toInt cents) < 10 then cents ++ "0"
+        else cents
 
 chooseAction : Model -> String
 chooseAction model =

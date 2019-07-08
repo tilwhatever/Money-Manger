@@ -4,7 +4,13 @@
     background: white;
     border-bottom: 2px solid lightgrey;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 0.3fr;
+}
+
+
+
+#smiley {
+    height: 3em;
 }
 
 #income, #outgoing, #sum {
